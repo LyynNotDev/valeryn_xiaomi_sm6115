@@ -46,6 +46,11 @@
 #include "kernel_compat.h"
 #include "include/util.h"
 
+#ifdef CONFIG_KSU_SUSFS
+/* Unity build: declarations must precede all included component sources. */
+#include <linux/susfs.h>
+#endif
+
 #include "policy/app_profile.h"
 #include "policy/allowlist.h"
 #include "policy/feature.h"

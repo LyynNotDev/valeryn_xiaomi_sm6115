@@ -1,9 +1,5 @@
 #define KSU_DRIVER_PERMISSION_SU_SESSION (1UL << 0)
 
-#ifdef CONFIG_KSU_SUSFS
-#include <linux/susfs.h>
-#endif
-
 struct ksu_driver_context {
 	unsigned long permissions;
 };
