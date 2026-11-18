@@ -1,5 +1,0 @@
-Upstream: https://github.com/KernelSU-Next/KernelSU-Next
-Ref: dev
-Commit: aa235b99574b5b349cdb4980bcb98fd58e6abb28
-Date: 2026-11-17T09:39:40+08:00
-Scope: kernel/ vendored for non-GKI built-in integration
