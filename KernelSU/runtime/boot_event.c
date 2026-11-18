@@ -54,6 +54,15 @@ void on_boot_completed(void)
 	ksu_boot_completed = true;
 	pr_info("on_boot_completed!\n");
 	track_throne(true);
+#ifdef CONFIG_KSU_SUSFS
+#ifdef CONFIG_KSU_SUSFS_PRIORITY_UID_FILTER
+	susfs_parse_priority_app_strings();
+#endif
+#ifdef CONFIG_KSU_SUSFS_SUS_PATH
+	susfs_parse_sus_path_app_strings();
+#endif
+	susfs_start_sdcard_monitor_fn();
+#endif
 #ifdef CONFIG_KSU_HOSTSREDIRECT
 	ksu_hostsredirect_init();
 #endif

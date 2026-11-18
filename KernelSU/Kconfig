@@ -123,4 +123,66 @@ config KSU_HEURISTIC_IN_TREE_BUILD
 	help
 	  Note: if youre building out-of-tree, configure by editing ksu.c #defines instead.
 
+menu "KernelSU - SUSFS"
+config KSU_SUSFS
+	bool "KernelSU addon - SUSFS"
+	depends on KSU
+	depends on THREAD_INFO_IN_TASK
+	default y
+
+config KSU_SUSFS_SUS_PATH
+	bool "Hide suspicious paths"
+	depends on KSU_SUSFS
+	default y
+
+config KSU_SUSFS_SUS_MOUNT
+	bool "Hide suspicious mounts"
+	depends on KSU_SUSFS
+	default y
+
+config KSU_SUSFS_SUS_KSTAT
+	bool "Spoof suspicious kstat"
+	depends on KSU_SUSFS
+	default y
+
+config KSU_SUSFS_SPOOF_UNAME
+	bool "Spoof uname"
+	depends on KSU_SUSFS
+	default y
+
+config KSU_SUSFS_ENABLE_LOG
+	bool "Enable SUSFS kernel logging"
+	depends on KSU_SUSFS
+	default y
+
+config KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS
+	bool "Hide KSU/SUSFS symbols from /proc/kallsyms"
+	depends on KSU_SUSFS
+	default y
+
+config KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG
+	bool "Spoof /proc/bootconfig or /proc/cmdline"
+	depends on KSU_SUSFS
+	default y
+
+config KSU_SUSFS_OPEN_REDIRECT
+	bool "Enable open path redirection"
+	depends on KSU_SUSFS
+	default y
+
+config KSU_SUSFS_SUS_MAP
+	bool "Hide suspicious mapped files from proc maps interfaces"
+	depends on KSU_SUSFS
+	default y
+
+config KSU_SUSFS_PRIORITY_UID_FILTER
+	bool "Hide selected UIDs from priority and ioprio syscalls"
+	depends on KSU_SUSFS
+	default y
+	help
+	  Hides package-derived UIDs from getpriority, setpriority,
+	  ioprio_get and ioprio_set. The SUS_PATH UID filter is separate.
+
+endmenu
+
 endmenu

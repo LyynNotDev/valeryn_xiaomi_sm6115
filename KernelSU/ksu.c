@@ -288,6 +288,9 @@ static int __init kernelsu_init(void)
 #endif
 
 	ksu_lsm_hook_init();
+#ifdef CONFIG_KSU_SUSFS
+	susfs_init();
+#endif
 	return 0;
 }
 

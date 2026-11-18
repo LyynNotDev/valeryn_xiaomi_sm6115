@@ -1,5 +1,9 @@
 #define KSU_DRIVER_PERMISSION_SU_SESSION (1UL << 0)
 
+#ifdef CONFIG_KSU_SUSFS
+#include <linux/susfs.h>
+#endif
+
 struct ksu_driver_context {
 	unsigned long permissions;
 };
@@ -80,6 +84,14 @@ bool ksu_is_su_session_fd(const struct file *filp)
 // downstream: make sure to pass arg as reference, this can allow us to extend things.
 int ksu_handle_sys_reboot(int magic1, int magic2, unsigned int cmd, void __user **arg)
 {
+#ifdef CONFIG_KSU_SUSFS
+	if (magic1 == KSU_INSTALL_MAGIC1 && magic2 == SUSFS_MAGIC) {
+		if (current_uid().val == 0)
+			return ksu_susfs_dispatch(cmd, arg);
+		return 0;
+	}
+#endif
+
 	if (magic1 != KSU_INSTALL_MAGIC1)
 		return 0;
 
