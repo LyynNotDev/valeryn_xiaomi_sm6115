@@ -1,0 +1,6 @@
+Upstream: https://github.com/backslashxx/KernelSU
+Release: v3.3.1+52
+Commit: 70f6aeefc2a8a358acd73c2c67383d60ca716de7
+UAPI: 6
+Manager priority: KowSU (KOWX712) plus multi-manager signature support
+Scope: kernel and uapi vendored for Linux 4.19 non-GKI build
