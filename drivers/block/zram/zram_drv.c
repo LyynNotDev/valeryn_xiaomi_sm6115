@@ -1224,19 +1224,21 @@ static struct zram_entry *zram_entry_alloc(struct zram *zram,
 	return entry;
 }
 
-void zram_entry_free(struct zram *zram, struct zram_entry *entry)
+/* Return true if the physical compressed allocation was released. */
+bool zram_entry_free(struct zram *zram, struct zram_entry *entry)
 {
 	if (!zram_dedup_put_entry(zram, entry))
-		return;
+		return false;
 
 	zs_free(zram->mem_pool, zram_entry_handle(zram, entry));
 
 	if (!zram_dedup_enabled(zram))
-		return;
+		return true;
 
 	kfree(entry);
 
 	atomic64_sub(sizeof(*entry), &zram->stats.meta_data_size);
+	return true;
 }
 
 static void zram_meta_free(struct zram *zram, u64 disksize)
@@ -1320,10 +1322,10 @@ static void zram_free_page(struct zram *zram, size_t index)
 	if (!entry)
 		return;
 
-	zram_entry_free(zram, entry);
-
-	atomic64_sub(zram_get_obj_size(zram, index),
-			&zram->stats.compr_data_size);
+	/* A shared entry is charged only when its final reference is released. */
+	if (zram_entry_free(zram, entry))
+		atomic64_sub(zram_get_obj_size(zram, index),
+				&zram->stats.compr_data_size);
 out:
 	atomic64_dec(&zram->stats.pages_stored);
 	zram_set_entry(zram, index, NULL);
