@@ -1,3 +1,5 @@
+#include "manager/throne_tracker.h"
+
 static int do_grant_root(void __user *arg)
 {
 	int ret;
@@ -26,14 +28,19 @@ static int do_get_info(void __user *arg)
 	}
 #endif
 
+	cmd.features = KSU_FEATURE_MAX;
+	cmd.uapi_version = KERNEL_SU_UAPI_VERSION;
+
 	if (is_manager()) {
 		cmd.flags |= KSU_GET_INFO_FLAG_MANAGER;
+		if (ksu_is_mambosu_compat_manager()) {
+			/* Its core legacy ABI matches; report the caller's expected UAPI. */
+			cmd.uapi_version = 5;
+		}
 	}
 #ifndef KSU_NO_PREINIT
 	cmd.flags |= KSU_GET_INFO_FLAG_PREINIT;
 #endif
-	cmd.features = KSU_FEATURE_MAX;
-	cmd.uapi_version = KERNEL_SU_UAPI_VERSION;
 
 	if (ksuver_override)
 		cmd.version = ksuver_override;

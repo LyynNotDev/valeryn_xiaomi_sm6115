@@ -4,3 +4,14 @@ Commit: 70f6aeefc2a8a358acd73c2c67383d60ca716de7
 UAPI: 6
 Manager priority: KowSU (KOWX712) plus multi-manager signature support
 Scope: kernel and uapi vendored for Linux 4.19 non-GKI build
+
+Additional manager compatibility (this kernel remains backslashxx, not MamboHook):
+- mamboSU manager package: com.rapli.mambosu
+- Signature certificate size: 0x384 (900 bytes)
+- Signature SHA256: a9462b8b98ea1ca7901b0cbdcebfaa35f0aa95e51b01d66e6b6d2c81b97746d8
+- Identity source: https://github.com/RapliVx/KernelSU/tree/xxksu/kernel (95d8c89e37fbf7b80a961d22b7830afade5ce94d)
+- Package/crown binding uses the package from the APK that passed signature validation.
+- Core legacy commands and app_profile ABI were compared with the official manager source.
+- A signature-crowned mamboSU caller receives its expected UAPI 5 in GET_INFO; all other callers retain the backslashxx UAPI 6. Bridge state is removed when that mamboSU UID is no longer installed.
+- Existing manager identities, default manager preference, backslashxx root engine, SUSFS, and NoMount remain in place. No KPM or separate mamboSU kernel driver is imported.
+- Native mamboSU-hook/driver feature support is not claimed by this manager compatibility layer; runtime manager behavior requires an on-device check.

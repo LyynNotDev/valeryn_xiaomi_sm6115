@@ -14,7 +14,8 @@ static char cached_manager_apk_path[DATA_PATH_LEN];
 })
 #define is_kowsu_apk(tgt) extra_manager_apk(tgt, "com.kowx712.supermanager")
 #define is_midorisu_apk(tgt) extra_manager_apk(tgt, "com.midori.supermanager")
-#define test_extra_pkgs(tgt) (is_kowsu_apk(tgt) || is_midorisu_apk(tgt))
+#define is_mambosu_apk(tgt) extra_manager_apk(tgt, "com.rapli.mambosu")
+#define test_extra_pkgs(tgt) (is_kowsu_apk(tgt) || is_midorisu_apk(tgt) || is_mambosu_apk(tgt))
 
 #define SYSTEM_PACKAGES_LIST_PATH "/data/system/packages.list"
 
@@ -24,15 +25,33 @@ struct uid_data {
 	char package[KSU_MAX_PACKAGE_NAME];
 };
 
+static uid_t ksu_mambosu_compat_appid = KSU_INVALID_APPID;
+
+bool ksu_is_mambosu_compat_manager(void)
+{
+	return is_manager() &&
+		ksu_mambosu_compat_appid != KSU_INVALID_APPID &&
+		ksu_mambosu_compat_appid == current_uid().val % KSU_PER_USER_RANGE;
+}
+
 static void crown_manager(const char *apk, struct list_head *uid_data)
 {
 	struct list_head *list = (struct list_head *)uid_data;
 	struct uid_data *np;
+	char pkg[KSU_MAX_PACKAGE_NAME] = { 0 };
+
+	/* Crown the UID that owns the APK that actually passed signature checks. */
+	if (get_pkg_from_apk_dir_path(pkg, apk) < 0)
+		return;
 
 	list_for_each_entry (np, list, list) {
-		if (test_extra_pkgs(np->package) || strncmp(np->package, KSU_PACKAGE_NAME, KSU_MAX_PACKAGE_NAME) == 0) {
+		if ((test_extra_pkgs(np->package) ||
+		     strncmp(np->package, KSU_PACKAGE_NAME, KSU_MAX_PACKAGE_NAME) == 0) &&
+		    strncmp(np->package, pkg, KSU_MAX_PACKAGE_NAME) == 0) {
 			pr_info("Crowning manager: uid=%d\n", np->uid);
 			ksu_set_manager_appid(np->uid);
+			if (is_mambosu_apk(pkg))
+				ksu_mambosu_compat_appid = np->uid % KSU_PER_USER_RANGE;
 			break;
 		}
 	}
@@ -301,6 +320,11 @@ static void throne_tracker_fn(bool prune_only)
 	// now update uid list
 	struct uid_data *np;
 	struct uid_data *n;
+
+	/* A package change can remove MamboSU while another manager remains. */
+	if (ksu_mambosu_compat_appid != KSU_INVALID_APPID &&
+	    !is_uid_exist(ksu_mambosu_compat_appid, "com.rapli.mambosu", &uid_list))
+		ksu_mambosu_compat_appid = KSU_INVALID_APPID;
 
 	if (prune_only)
 		goto prune;

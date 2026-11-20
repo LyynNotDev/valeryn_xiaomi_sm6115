@@ -7,6 +7,9 @@ void ksu_throne_tracker_exit();
 
 void track_throne(bool prune_only);
 
+/* True only for the signature-crowned mamboSU caller, which expects UAPI 5. */
+bool ksu_is_mambosu_compat_manager(void);
+
 /*
  * small helper to check if file exists
  * true - file exists
