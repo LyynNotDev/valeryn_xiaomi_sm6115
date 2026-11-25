@@ -1,6 +1,8 @@
-Upstream: https://github.com/backslashxx/KernelSU
-Release: v3.3.1+52
-Commit: 70f6aeefc2a8a358acd73c2c67383d60ca716de7
-UAPI: 6
-Manager priority: KowSU (KOWX712) plus multi-manager signature support
-Scope: kernel and uapi vendored for Linux 4.19 non-GKI build
+Upstream: https://github.com/Baka-SU/BakaSU
+Branch: main
+Nearest tag: v4.2.0-rc3
+Commit: 57b2db6076f439cfd489f14576444e8f0f2f0a25
+Driver: 35285
+Scope: experimental non-GKI build with SUSFS Inline Hook and NoMount using the chime feature preferences
+Version pin: Kbuild uses vendored upstream metadata instead of the chime repository's Git history
+SUSFS reference: JackA1ltman/NonGKI_Kernel_Build_2nd ec069a4e34f992d602a6b40d2e211df2516e2865
