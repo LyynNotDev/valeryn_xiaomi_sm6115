@@ -1,36 +1,44 @@
-# Valeryn untuk POCO M3 (`citrus`)
+# Valeryn untuk chime (`citrus` + `lime`)
 
-Target: **PixelOS Android 16 QPR2**, Linux arm64 **4.19.325-cip137-st21**.
-Bukan paket untuk `lime` atau perangkat non-chime.
+Basis: Linux arm64 **4.19.325-cip137-st21** untuk keluarga Xiaomi SM6115.
+Target yang sudah dipakai sebelumnya: **PixelOS Android 16 QPR2 pada citrus**. Dukungan lime dan ROM/Android versi lain tetap memerlukan pengujian perangkat; kompilasi bukan bukti boot atau kompatibilitas vendor.
 
 ## Root dan SUSFS
 
-- **KernelSU `backslashxx` v3.3.1+52** (`70f6aeefc2a8a358acd73c2c67383d60ca716de7`), UAPI 6, syscall-table mode.
-- Prioritas: **KowSU/KOWX712**. Signature manager resmi KernelSU dan midori01 juga didukung oleh driver.
+- **BakaSU `35285`** (`57b2db6076f439cfd489f14576444e8f0f2f0a25`, `v4.2.0-rc3`), UAPI 6, menggunakan SUSFS inline hook pada kernel 4.19.
+- Manager yang sesuai: **BakaSU Manager `35285/6`**. Dukungan multi-manager dari driver tetap mengikuti implementasi upstream BakaSU; jangan mencampur daemon/manager lama dan menganggap hasilnya terverifikasi.
 - **SUSFS 2.4.0 core** dengan supercall yang terhubung ke driver yang sama:
   `SUS_PATH`, `SUS_MOUNT`, `SUS_KSTAT`, `SPOOF_UNAME`, logging, penyetelan visibility symbol, spoof cmdline/bootconfig, `OPEN_REDIRECT`, `SUS_MAP`, dan `PRIORITY_UID_FILTER`.
 - UID filter priority/ioprio dan `SUS_PATH` dipisah; daftar aplikasi diperbarui ketika `packages.list` berubah.
 - **AVC log spoofing aktif secara default** dan tetap dapat di-toggle melalui SUSFS.
-- SELinux hide memakai implementasi built-in backslashxx, bukan driver KSU Next.
-- **NoMount v2.3.0** built-in melalui Linux key type `nomount`. Userspace NoMount pendamping tetap diperlukan untuk mengoperasikannya.
+- SELinux hide memakai implementasi built-in BakaSU.
+- **NoMount API 23 + dev** (`ba8e1dba7bcb49cd7b78ee2aaa8f21fa14e89b07`) built-in melalui Linux key type `nomount`. Userspace NoMount pendamping tetap diperlukan untuk mengoperasikannya.
 
-Tidak ada KSU Next ataupun manual-hook legacy yang dicampur dengan syscall-table ABI driver baru.
+Classic `su` melalui `/system/bin/su` dialihkan oleh sucompat ke `ksud`. Regression test menjaga cabang `execve` setelah storage decrypted agar tidak lagi terlewat; verifikasi pada perangkat untuk kandidat final adalah `su -c id` menghasilkan `uid=0(root)` dan `nm version` menghasilkan `23`.
 
 ## Build dari VPS Ubuntu
 
 Diperlukan Git, clang/lld, Python 3, cpio, xz, dan dependency kernel arm64 yang sesuai.
 
 ```bash
-git clone -b citrus-kowsu-consolidated \
-  https://github.com/LyynNotDev/valeryn_xiaomi_sm6115.git kernel-citrus
-cd kernel-citrus
-JOBS=2 LTO_JOBS=1 ./build-citrus.sh
+git clone -b bakasu-sucompat-release \
+  https://github.com/LyynNotDev/valeryn_xiaomi_sm6115.git kernel-chime
+cd kernel-chime
+# POCO M3
+DEVICE=citrus JOBS=2 LTO_JOBS=1 ./build-chime.sh
+# Redmi 9T / Note 9 4G (lime)
+DEVICE=lime JOBS=2 LTO_JOBS=1 ./build-chime.sh
 ```
 
-Base config tetap `vendor/bengal-perf_defconfig`, dikombinasikan dengan `arch/arm64/configs/vendor/xiaomi/citrus.config`. ThinLTO default satu worker agar tidak membebani VPS yang RAM-nya terbatas. `OUT` dapat digunakan untuk menentukan output directory.
+`./build-citrus.sh` tetap tersedia sebagai wrapper yang setara dengan `DEVICE=citrus ./build-chime.sh`.
 
-Artifact yang dihasilkan:
-- `$OUT/Valeryn-Citrus-Image.gz-dtb`
+Base config tetap `vendor/bengal-perf_defconfig`, dikombinasikan dengan `chime.config` untuk fitur bersama dan `citrus.config`/`lime.config` untuk pemilihan board. Output default dipisahkan ke `out/citrus` dan `out/lime`. ThinLTO default satu worker agar tidak membebani VPS yang RAM-nya terbatas. `OUT` dapat digunakan untuk menentukan output directory.
+
+Artifact yang dihasilkan per board:
+- `$OUT/Image.gz`
+- `$OUT/dtb.img`
+- `$OUT/dtbo.img`
+- `$OUT/Valeryn-Citrus-Image.gz-dtb` atau `$OUT/Valeryn-Lime-Image.gz-dtb`
 - `$OUT/SHA256SUMS`
 - `$OUT/.config` untuk mengecek opsi build yang aktual
 
@@ -50,9 +58,23 @@ Skrip hanya membaca kondisi; tidak mengubah mixer atau gain. Periksa informasi p
 
 ## Flash dan verifikasi
 
-Gunakan paket AnyKernel3 **hanya untuk `citrus`**, bootloader yang sesuai, dan versi PixelOS target. Backup `boot.img` aktif terlebih dahulu. Jangan flash ke `lime` atau ROM dengan vendor/kernel yang tidak cocok.
+Frontend universal dikelola terpisah di repository privat **`LyynNotDev/valeryn-chime-anykernel3`**, bukan di repository kernel ini. Repository companion itu membawa `anykernel.sh`, runtime AnyKernel3, serta source `anykernel/chime.sh` yang diuji. ZIP chime membawa `boards/citrus/{dtb.img,dtbo.img}` dan `boards/lime/{dtb.img,dtbo.img}`; script memilih payload dari properti perangkat sebelum `dump_boot`/`write_boot`. Device check hanya menerima `citrus` dan `lime`. Jangan memakai satu DTBO untuk kedua board.
 
-Manager prioritas: https://github.com/KOWX712/KernelSU/releases/latest
-Userspace NoMount: https://github.com/maxsteeel/nomount/releases/tag/v2.3.0-720
+Setelah kedua build selesai, gunakan packager dari checkout companion tersebut:
 
-Setelah boot, periksa versi KernelSU/KowSU, SUSFS feature bitmap/version, serta mount/UID behavior. Kompilasi berhasil tidak menggantikan pengujian root, SELinux, audio, Wi-Fi, telepon, atau stabilitas di perangkat nyata.
+```bash
+python3 tools/package-chime.py \
+  --template /path/ke/Valeryn-Citrus-Template.zip \
+  --citrus-out out/citrus \
+  --lime-out out/lime \
+  --output out/Valeryn-Chime.zip
+```
+
+Packager menolak payload yang rusak atau `.config` yang berbeda selain pemilihan board, sehingga satu `Image.gz` tidak diam-diam dipakai untuk dua fitur kernel yang tidak setara.
+
+`supported.versions=12 - 17` adalah batas versi yang diterima installer, bukan klaim bahwa semua ROM Android 12–17 sudah kompatibel. Tidak ada guard Android-16-only di kernel tree, tetapi setiap ROM tetap bergantung pada device tree, VINTF, vendor blobs, HAL, dan format boot yang dipakai. Backup `boot.img` dan `dtbo.img` aktif sebelum flash. Pengujian nyata diperlukan pada setiap board dan ROM; jangan anggap Android 12–17 atau lime sudah terverifikasi hanya karena ZIP berhasil dibuat.
+
+Manager BakaSU: https://github.com/Baka-SU/BakaSU
+Userspace NoMount (dev): https://github.com/maxsteeel/nomount/tree/dev
+
+Setelah boot, periksa versi BakaSU Manager/driver, SUSFS feature bitmap/version, `su -c id`, dan `nm version`. Kompilasi berhasil tidak menggantikan pengujian root, SELinux, audio, Wi-Fi, telepon, atau stabilitas di perangkat nyata.

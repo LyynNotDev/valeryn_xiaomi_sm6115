@@ -2570,14 +2570,6 @@ static void susfs_run_extra_works(struct work_struct *work) {
 #endif // #ifdef CONFIG_KSU_SUSFS_SUS_PATH
 }
 
-/* SUSFS root-domain bridge for backslashxx KernelSU. */
-extern bool is_ksu_domain(void);
-
-bool susfs_is_current_ksu_domain(void)
-{
-	return is_ksu_domain();
-}
-
 /* susfs_init */
 void susfs_init(void) {\
 	SUSFS_LOGI("Initializing susfs_extra_works\n");
