@@ -1,5 +1,5 @@
 Upstream: https://github.com/maxsteeel/nomount
-Tag: v2.3.0-720
-Module version: v2.3.0
-Commit: ab93ee32a589ccb021257b3c1f280e058520d844
-Scope: kernel/src vendored for built-in non-GKI integration
+Branch: dev
+Base release: v2.3.1
+Commit: ba8e1dba7bcb49cd7b78ee2aaa8f21fa14e89b07
+Scope: kernel/src vendored byte-for-byte for built-in non-GKI integration
