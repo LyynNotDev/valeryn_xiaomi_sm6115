@@ -1,0 +1,4 @@
+Reference: liliumproject/kernel_xiaomi_chime
+Branch: ursinia
+Commit: e6050e513aff7380ba3e44ee2f1878e2a8941c41
+Scope: playback-only WSA compander defaults; no capture/microphone changes.
