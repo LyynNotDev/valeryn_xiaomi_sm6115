@@ -6,7 +6,7 @@ Target yang sudah dipakai sebelumnya: **PixelOS Android 16 QPR2 pada citrus**. D
 ## Root dan SUSFS
 
 - **BakaSU `35285`** (`57b2db6076f439cfd489f14576444e8f0f2f0a25`, `v4.2.0-rc3`), UAPI 6, menggunakan SUSFS inline hook pada kernel 4.19.
-- Manager yang sesuai: **BakaSU Manager `35285/6`**. Dukungan multi-manager dari driver tetap mengikuti implementasi upstream BakaSU; jangan mencampur daemon/manager lama dan menganggap hasilnya terverifikasi.
+- Manager yang sesuai: **BakaSU Manager `35285/6`**. Referensi Manager upstream telah diperiksa sampai `cac1e79355ef451539f5c5ba9dc2bda1c64069de`; commit tersebut hanya memperbarui translasi Manager dan tidak mengubah `kernel/` atau `uapi/`. Dukungan multi-manager dari driver tetap mengikuti implementasi upstream BakaSU; jangan mencampur daemon/manager lama dan menganggap hasilnya terverifikasi.
 - **SUSFS 2.4.0 core** dengan supercall yang terhubung ke driver yang sama:
   `SUS_PATH`, `SUS_MOUNT`, `SUS_KSTAT`, `SPOOF_UNAME`, logging, penyetelan visibility symbol, spoof cmdline/bootconfig, `OPEN_REDIRECT`, `SUS_MAP`, dan `PRIORITY_UID_FILTER`.
 - UID filter priority/ioprio dan `SUS_PATH` dipisah; daftar aplikasi diperbarui ketika `packages.list` berubah.

@@ -2,6 +2,7 @@ Upstream: https://github.com/Baka-SU/BakaSU
 Branch: main
 Nearest tag: v4.2.0-rc3
 Commit: 57b2db6076f439cfd489f14576444e8f0f2f0a25
+Manager upstream: cac1e79355ef451539f5c5ba9dc2bda1c64069de (manager translations only; kernel/uapi unchanged)
 Driver: 35285
 Scope: experimental non-GKI build with SUSFS Inline Hook and NoMount using the chime feature preferences
 Version pin: Kbuild uses vendored upstream metadata instead of the chime repository's Git history
