@@ -7,8 +7,8 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 REFERENCE = Path("/home/agentuser/kernel-refs/bakasu-upstream")
-EXPECTED_COMMIT = "57b2db6076f439cfd489f14576444e8f0f2f0a25"
-EXPECTED_VERSION = "35285"
+EXPECTED_COMMIT = "99ff0a27ca5477180da6d70e7387b91b0a9aa5b7"
+EXPECTED_VERSION = "35289"
 LOCAL_BUILD_FILES = {
     Path("Kbuild"),
     Path("tools/code_generation/preinit_runner/preinit_runner.mk"),
@@ -70,7 +70,7 @@ class BakaSUSpikeTest(unittest.TestCase):
     def test_driver_version_is_pinned_not_inherited_from_chime_git(self) -> None:
         kbuild = (ROOT / "KernelSU/Kbuild").read_text()
         self.assertIn(f"KSU_VERSION := {EXPECTED_VERSION}", kbuild)
-        self.assertIn("KSU_COMMIT_SHA := 57b2db60", kbuild)
+        self.assertIn(f"KSU_COMMIT_SHA := {EXPECTED_COMMIT[:8]}", kbuild)
         self.assertIn("KSU_TAG_NAME := v4.2.0-rc3", kbuild)
         upstream = (ROOT / "KernelSU/UPSTREAM").read_text()
         self.assertIn(EXPECTED_COMMIT, upstream)

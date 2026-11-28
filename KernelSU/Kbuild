@@ -61,9 +61,9 @@ KDIR := $(KDIR)
 KSU_SRC := $(realpath $(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
 
 # Vendored BakaSU provenance: do not inherit the chime repository's version.
-KSU_VERSION := 35285
+KSU_VERSION := 35289
 KSU_TAG_NAME := v4.2.0-rc3
-KSU_COMMIT_SHA := 57b2db60
+KSU_COMMIT_SHA := 99ff0a27
 KSU_BRANCH_NAME := main
 
 ifdef KBUILD_EXTMOD
