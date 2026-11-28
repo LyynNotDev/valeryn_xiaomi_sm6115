@@ -5,14 +5,14 @@ Target yang sudah dipakai sebelumnya: **PixelOS Android 16 QPR2 pada citrus**. D
 
 ## Root dan SUSFS
 
-- **BakaSU `35285`** (`57b2db6076f439cfd489f14576444e8f0f2f0a25`, `v4.2.0-rc3`), UAPI 6, menggunakan SUSFS inline hook pada kernel 4.19.
-- Manager yang sesuai: **BakaSU Manager `35285/6`**. Referensi Manager upstream telah diperiksa sampai `cac1e79355ef451539f5c5ba9dc2bda1c64069de`; commit tersebut hanya memperbarui translasi Manager dan tidak mengubah `kernel/` atau `uapi/`. Dukungan multi-manager dari driver tetap mengikuti implementasi upstream BakaSU; jangan mencampur daemon/manager lama dan menganggap hasilnya terverifikasi.
+- **BakaSU `35289`** (`99ff0a27ca5477180da6d70e7387b91b0a9aa5b7`, `v4.2.0-rc3`), UAPI 6, menggunakan SUSFS inline hook pada kernel 4.19. Termasuk fallback upstream `4ca505a8` ketika metadata `is_original_xxx` tidak tersedia.
+- Manager yang sesuai: **BakaSU Manager `35289/6`**. Referensi Manager dan driver memakai revisi upstream yang sama. Dukungan multi-manager dari driver tetap mengikuti implementasi upstream BakaSU; jangan mencampur daemon/manager lama dan menganggap hasilnya terverifikasi.
 - **SUSFS 2.4.0 core** dengan supercall yang terhubung ke driver yang sama:
   `SUS_PATH`, `SUS_MOUNT`, `SUS_KSTAT`, `SPOOF_UNAME`, logging, penyetelan visibility symbol, spoof cmdline/bootconfig, `OPEN_REDIRECT`, `SUS_MAP`, dan `PRIORITY_UID_FILTER`.
 - UID filter priority/ioprio dan `SUS_PATH` dipisah; daftar aplikasi diperbarui ketika `packages.list` berubah.
 - **AVC log spoofing aktif secara default** dan tetap dapat di-toggle melalui SUSFS.
 - SELinux hide memakai implementasi built-in BakaSU.
-- **NoMount API 23 + dev** (`ba8e1dba7bcb49cd7b78ee2aaa8f21fa14e89b07`) built-in melalui Linux key type `nomount`. Userspace NoMount pendamping tetap diperlukan untuk mengoperasikannya.
+- **NoMount API 23 + dev** (`87b05967532a039f5d3bea660eadcabed43d3e71`) built-in melalui Linux key type `nomount`. Termasuk pemeriksaan backing inode dan pin native parent dengan full path. Userspace NoMount pendamping tetap diperlukan untuk mengoperasikannya.
 
 Classic `su` melalui `/system/bin/su` dialihkan oleh sucompat ke `ksud`. Regression test menjaga cabang `execve` setelah storage decrypted agar tidak lagi terlewat; verifikasi pada perangkat untuk kandidat final adalah `su -c id` menghasilkan `uid=0(root)` dan `nm version` menghasilkan `23`.
 

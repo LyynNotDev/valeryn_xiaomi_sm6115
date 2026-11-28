@@ -6,7 +6,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 REFERENCE = Path('/home/agentuser/kernel-refs/nomount-dev')
-EXPECTED_COMMIT = 'ba8e1dba7bcb49cd7b78ee2aaa8f21fa14e89b07'
+EXPECTED_COMMIT = '87b05967532a039f5d3bea660eadcabed43d3e71'
 BASE_RELEASE = 'v2.3.1'
 VENDORED_FILES = ('Kconfig', 'Makefile', 'nomount.c', 'nomount.h')
 
