@@ -7,3 +7,4 @@ Driver: 35289
 Scope: experimental non-GKI build with SUSFS Inline Hook and NoMount using the chime feature preferences
 Version pin: Kbuild uses vendored upstream metadata instead of the chime repository's Git history
 SUSFS reference: JackA1ltman/NonGKI_Kernel_Build_2nd ec069a4e34f992d602a6b40d2e211df2516e2865
+ADB-root hide reference: Mohithash/kernel_xiaomi_sm8635@4f00f1dc16f67fc60bedcfa95ee8d5b36d1078b9 (adapted to mask only BINDER__CALL; live policy unchanged)

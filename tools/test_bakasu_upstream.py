@@ -15,6 +15,7 @@ LOCAL_BUILD_FILES = {
 }
 UPSTREAM_NON_RUNTIME_FILES = {Path(".clangd.example")}
 UPSTREAM_NON_RUNTIME_DIRS = {".vscode"}
+LOCAL_FEATURE_FILES = {Path("feature/selinux_hide/selinux_hide_auto.c")}
 SUSFS_FEATURES = (
     "SUS_PATH", "SUS_MOUNT", "SUS_KSTAT", "SPOOF_UNAME", "ENABLE_LOG",
     "HIDE_KSU_SUSFS_SYMBOLS", "SPOOF_CMDLINE_OR_BOOTCONFIG",
@@ -43,7 +44,7 @@ class BakaSUSpikeTest(unittest.TestCase):
             if not source.is_file():
                 continue
             relative = source.relative_to(REFERENCE / "kernel")
-            if relative in LOCAL_BUILD_FILES or relative in UPSTREAM_NON_RUNTIME_FILES:
+            if relative in LOCAL_BUILD_FILES or relative in UPSTREAM_NON_RUNTIME_FILES or relative in LOCAL_FEATURE_FILES:
                 continue
             if relative.parts and relative.parts[0] in UPSTREAM_NON_RUNTIME_DIRS:
                 continue

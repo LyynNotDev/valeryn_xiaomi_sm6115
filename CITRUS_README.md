@@ -11,7 +11,7 @@ Target yang sudah dipakai sebelumnya: **PixelOS Android 16 QPR2 pada citrus**. D
   `SUS_PATH`, `SUS_MOUNT`, `SUS_KSTAT`, `SPOOF_UNAME`, logging, penyetelan visibility symbol, spoof cmdline/bootconfig, `OPEN_REDIRECT`, `SUS_MAP`, dan `PRIORITY_UID_FILTER`.
 - UID filter priority/ioprio dan `SUS_PATH` dipisah; daftar aplikasi diperbarui ketika `packages.list` berubah.
 - **AVC log spoofing aktif secara default** dan tetap dapat di-toggle melalui SUSFS.
-- SELinux hide memakai implementasi built-in BakaSU.
+- SELinux hide memakai implementasi built-in BakaSU, ditambah mask sempit pada query `adbd -> adbroot:binder call` ala referensi `4f00f1d`. Hanya respons `BINDER__CALL` untuk detektor yang di-mask; rule ADB root live dan permission lain tetap utuh.
 - **NoMount API 23 + dev** (`87b05967532a039f5d3bea660eadcabed43d3e71`) built-in melalui Linux key type `nomount`. Termasuk pemeriksaan backing inode dan pin native parent dengan full path. Userspace NoMount pendamping tetap diperlukan untuk mengoperasikannya.
 
 Classic `su` melalui `/system/bin/su` dialihkan oleh sucompat ke `ksud`. Regression test menjaga cabang `execve` setelah storage decrypted agar tidak lagi terlewat; verifikasi pada perangkat untuk kandidat final adalah `su -c id` menghasilkan `uid=0(root)` dan `nm version` menghasilkan `23`.

@@ -238,6 +238,16 @@ out:
     return length;
 }
 
+/* Keep the live ADB-root rule intact; mask only the detector's binder-call query. */
+static void ksu_mask_adbroot_access(const char *scon, const char *tcon, u16 tclass, struct av_decision *avd)
+{
+    if (tclass != SECCLASS_BINDER)
+        return;
+    if (strcmp(scon, "u:r:adbd:s0") || strcmp(tcon, "u:r:adbroot:s0"))
+        return;
+    avd->allowed &= ~BINDER__CALL;
+}
+
 static ssize_t my_write_access(struct file *file, char *buf, size_t size)
 {
     // apply to all app uids
@@ -298,6 +308,8 @@ static ssize_t my_write_access(struct file *file, char *buf, size_t size)
 
     ksu_security_compute_av_user(backup_policydb, backup_sidtab, ssid, tsid, tclass, &avd);
 #endif
+
+    ksu_mask_adbroot_access(scon, tcon, tclass, &avd);
 
     // stock reads 1; a loader load_policy may have bumped the backup before we load
     avd.seqno = 1;
